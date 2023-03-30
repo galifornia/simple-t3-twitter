@@ -1,8 +1,13 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 
-import { useUser } from "@clerk/nextjs";
 import { api, RouterOutputs } from "~/utils/api";
+
+import { useUser } from "@clerk/nextjs";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 const CreatePostWizard = ({}) => {
   const { user } = useUser();
@@ -34,7 +39,12 @@ const PostView = ({ post, author }: PostWithUser) => {
         alt={`Profile of @${author?.username}`}
       />
       <div className="flex flex-col">
-        <h5 className="text-slate-400">@{author.username}</h5>
+        <div className="flex gap-2 text-slate-400">
+          <h5 className="">@{author.username}</h5>
+          <span className="">·</span>
+          <span>{`${dayjs(post.createdAt).fromNow()}`}</span>
+        </div>
+
         <p>{post.content}</p>
       </div>
     </div>
