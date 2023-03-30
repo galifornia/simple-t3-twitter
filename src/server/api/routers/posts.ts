@@ -5,6 +5,7 @@ import { User } from "@clerk/nextjs/dist/api";
 import { clerkClient } from "@clerk/nextjs/server";
 
 import { Post } from "../../../../node_modules/.prisma/client/index.d";
+import { TRPCError } from "@trpc/server";
 
 const filterUserForClient = (user: User) => {
   return {
@@ -32,9 +33,18 @@ export const postsRouter = createTRPCRouter({
         })
       ).map(filterUserForClient);
 
-      return posts.map((post: Post) => ({
-        post,
-        author: users.find((user) => user.id === post.id),
-      }));
+      return posts.map((post: Post) => {
+        const author = users.find((user) => user.id === post.userId);
+        if (!author || !author.username)
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Author for post not found",
+          });
+
+        return {
+          post,
+          author,
+        };
+      });
     }),
 });

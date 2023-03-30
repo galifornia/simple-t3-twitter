@@ -2,7 +2,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 
 import { useUser } from "@clerk/nextjs";
-import { api } from "~/utils/api";
+import { api, RouterOutputs } from "~/utils/api";
 
 const CreatePostWizard = ({}) => {
   const { user } = useUser();
@@ -20,6 +20,23 @@ const CreatePostWizard = ({}) => {
         placeholder="Type something"
         className="grow bg-transparent outline-none"
       />
+    </div>
+  );
+};
+
+type PostWithUser = RouterOutputs["posts"]["getAllPosts"][number];
+const PostView = ({ post, author }: PostWithUser) => {
+  return (
+    <div className="flex gap-4 border-b border-slate-400 p-4" key={post.id}>
+      <img
+        className="h-14 w-14 rounded-full"
+        src={author?.profilePictureUrl}
+        alt={`Profile of @${author?.username}`}
+      />
+      <div className="flex flex-col">
+        <h5 className="text-slate-400">@{author.username}</h5>
+        <p>{post.content}</p>
+      </div>
     </div>
   );
 };
@@ -48,10 +65,8 @@ const Home: NextPage = () => {
         </div>
         <div className="flex h-screen w-full justify-center">
           <div className="flex w-full flex-col gap-4 border-x border-slate-400">
-            {data.map(({ post, author }) => (
-              <div className="border-b border-slate-400 p-8" key={post.id}>
-                {post.content}
-              </div>
+            {data.map((postWithAuthor) => (
+              <PostView key={postWithAuthor.post.id} {...postWithAuthor} />
             ))}
           </div>
         </div>
