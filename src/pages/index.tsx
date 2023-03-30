@@ -2,10 +2,12 @@ import { type NextPage } from "next";
 import Head from "next/head";
 
 import { useUser } from "@clerk/nextjs";
+import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
   const { isLoaded, isSignedIn, user } = useUser();
-
+  const { data } = api.posts.getAllPosts.useQuery();
+  console.log({ data });
   if (!isLoaded || !isSignedIn) {
     return null;
   }
@@ -19,6 +21,17 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <p className="text-3xl text-white">Hello {user.username}!</p>
+        <div className="text-white">
+          {!data || data.length === 0 ? (
+            <p>No post were found.</p>
+          ) : (
+            <>
+              {data?.map((post) => (
+                <div key={post.id}>{post.content}</div>
+              ))}
+            </>
+          )}
+        </div>
       </main>
     </>
   );
