@@ -4,9 +4,29 @@ import Head from "next/head";
 import { useUser } from "@clerk/nextjs";
 import { api } from "~/utils/api";
 
+const CreatePostWizard = ({}) => {
+  const { user } = useUser();
+  if (!user) return null;
+
+  return (
+    <div className="flex gap-4">
+      <img
+        className="h-14 w-14 rounded-full"
+        src={user.profileImageUrl}
+        alt={`Profile image of @${user.username}`}
+      />
+      <input
+        type="text"
+        placeholder="Type something"
+        className="grow bg-transparent outline-none"
+      />
+    </div>
+  );
+};
+
 const Home: NextPage = () => {
   const { isLoaded, isSignedIn, user } = useUser();
-  const { data, isLoading } = api.posts.getAllPosts.useQuery();
+  const { data, isLoading } = api.posts.getAllPosts.useQuery(user?.id || "");
 
   if (!isLoaded || !isSignedIn) {
     return null;
@@ -23,10 +43,12 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="mx-auto flex w-full max-w-3xl flex-col justify-center">
-        <div className="w-full border border-slate-400 p-4">Header</div>
+        <div className="w-full border border-slate-400 p-4">
+          <CreatePostWizard />
+        </div>
         <div className="flex h-screen w-full justify-center">
           <div className="flex w-full flex-col gap-4 border-x border-slate-400">
-            {data.map((post) => (
+            {data.map(({ post, author }) => (
               <div className="border-b border-slate-400 p-8" key={post.id}>
                 {post.content}
               </div>
