@@ -7,10 +7,9 @@ const Home: NextPage = () => {
   const { isLoaded, isSignedIn, user } = useUser();
 
   if (!isLoaded || !isSignedIn) {
-    console.log("wut", isLoaded, isSignedIn);
     return null;
   }
-  console.log("wut2", isLoaded, user.username);
+
   return (
     <>
       <Head>

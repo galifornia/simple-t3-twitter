@@ -8,10 +8,12 @@ datasource db {
     relationMode = "prisma"
 }
 
-model User {
-    id        Int      @id @default(autoincrement())
-    email     String   @unique
-    name      String?
+model Post {
+    id        String   @id @default(cuid())
+    content   String   @db.VarChar(255)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    userId    String?
+
+    @@index([userId])
 }
