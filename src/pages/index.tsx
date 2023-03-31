@@ -2,12 +2,12 @@ import { type NextPage } from "next";
 import Head from "next/head";
 
 import { api, RouterOutputs } from "~/utils/api";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 import { useUser } from "@clerk/nextjs";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
-import LoadingSpinner from "~/components/LoadingSpinner";
 
 dayjs.extend(relativeTime);
 
@@ -22,7 +22,7 @@ const CreatePostWizard = ({}) => {
         height={56}
         className="h-14 w-14 rounded-full"
         src={user.profileImageUrl}
-        alt={`Profile image of @${user.username}`}
+        alt={`Profile image of @${user.username!}`}
       />
       <input
         type="text"
