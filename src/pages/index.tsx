@@ -6,6 +6,7 @@ import { api, RouterOutputs } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import Image from "next/image";
 
 dayjs.extend(relativeTime);
 
@@ -15,7 +16,9 @@ const CreatePostWizard = ({}) => {
 
   return (
     <div className="flex gap-4">
-      <img
+      <Image
+        width={56}
+        height={56}
         className="h-14 w-14 rounded-full"
         src={user.profileImageUrl}
         alt={`Profile image of @${user.username}`}
@@ -33,7 +36,9 @@ type PostWithUser = RouterOutputs["posts"]["getAllPosts"][number];
 const PostView = ({ post, author }: PostWithUser) => {
   return (
     <div className="flex gap-4 border-b border-slate-400 p-4" key={post.id}>
-      <img
+      <Image
+        width={56}
+        height={56}
         className="h-14 w-14 rounded-full"
         src={author?.profilePictureUrl}
         alt={`Profile of @${author?.username}`}
