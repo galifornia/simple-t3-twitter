@@ -62,7 +62,7 @@ const Feed = () => {
 
   if (isLoading)
     return (
-      <div className="flex h-screen w-screen items-center justify-center">
+      <div className="flex h-screen w-full items-center justify-center">
         <LoadingSpinner />
       </div>
     );
