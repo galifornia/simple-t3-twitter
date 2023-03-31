@@ -7,6 +7,7 @@ import { useUser } from "@clerk/nextjs";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
+import LoadingSpinner from "~/components/LoadingSpinner";
 
 dayjs.extend(relativeTime);
 
@@ -64,7 +65,12 @@ const Home: NextPage = () => {
     return null;
   }
 
-  if (isLoading) return <div>Fetching data...</div>;
+  if (isLoading)
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   if (!data) return <div>Something went wrong fetching the data.</div>;
 
   return (
