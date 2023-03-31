@@ -57,13 +57,8 @@ const PostView = ({ post, author }: PostWithUser) => {
   );
 };
 
-const Home: NextPage = () => {
-  const { isLoaded, isSignedIn, user } = useUser();
-  const { data, isLoading } = api.posts.getAllPosts.useQuery(user?.id || "");
-
-  if (!isLoaded || !isSignedIn) {
-    return null;
-  }
+const Feed = () => {
+  const { data, isLoading } = api.posts.getAllPosts.useQuery();
 
   if (isLoading)
     return (
@@ -72,6 +67,27 @@ const Home: NextPage = () => {
       </div>
     );
   if (!data) return <div>Something went wrong fetching the data.</div>;
+
+  return (
+    <div className="flex h-screen w-full justify-center">
+      <div className="flex w-full flex-col gap-4 border-x border-slate-400">
+        {data.map((postWithAuthor) => (
+          <PostView key={postWithAuthor.post.id} {...postWithAuthor} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const Home: NextPage = () => {
+  const { isLoaded, isSignedIn } = useUser();
+
+  // start fetching early
+  api.posts.getAllPosts.useQuery();
+
+  if (!isLoaded || !isSignedIn) {
+    return null;
+  }
 
   return (
     <>
@@ -84,13 +100,7 @@ const Home: NextPage = () => {
         <div className="w-full border border-slate-400 p-4">
           <CreatePostWizard />
         </div>
-        <div className="flex h-screen w-full justify-center">
-          <div className="flex w-full flex-col gap-4 border-x border-slate-400">
-            {data.map((postWithAuthor) => (
-              <PostView key={postWithAuthor.post.id} {...postWithAuthor} />
-            ))}
-          </div>
-        </div>
+        <Feed />
       </main>
     </>
   );
