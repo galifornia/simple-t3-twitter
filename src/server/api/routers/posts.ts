@@ -1,3 +1,4 @@
+import { protectedProcedure } from "./../trpc";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
@@ -50,5 +51,18 @@ export const postsRouter = createTRPCRouter({
           author,
         };
       });
+    }),
+  create: protectedProcedure
+    .input(z.string().min(1).max(280))
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.user.id;
+      const post = await ctx.prisma.post.create({
+        data: {
+          userId,
+          content: input,
+        },
+      });
+
+      return post;
     }),
 });
