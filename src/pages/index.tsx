@@ -55,6 +55,12 @@ const CreatePostWizard = ({}) => {
         className="grow bg-transparent outline-none"
         value={userInput}
         onChange={(e) => setUserInput(e.currentTarget.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault;
+            handleCreation();
+          }
+        }}
         disabled={isPosting}
       />
 
