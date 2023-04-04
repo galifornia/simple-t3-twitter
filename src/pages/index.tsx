@@ -8,12 +8,27 @@ import { useUser } from "@clerk/nextjs";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
+import { useState } from "react";
 
 dayjs.extend(relativeTime);
 
 const CreatePostWizard = ({}) => {
   const { user } = useUser();
+  const [userInput, setUserInput] = useState("");
   if (!user) return null;
+
+  const ctx = api.useContext();
+  const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
+    onSuccess: () => {
+      setUserInput("");
+      // !FIXME: replace with optimistic update behavior
+      void ctx.posts.getAllPosts.invalidate();
+    },
+  });
+
+  const handleCreation = () => {
+    mutate(userInput);
+  };
 
   return (
     <div className="flex gap-4">
@@ -28,7 +43,13 @@ const CreatePostWizard = ({}) => {
         type="text"
         placeholder="Type something"
         className="grow bg-transparent outline-none"
+        value={userInput}
+        onChange={(e) => setUserInput(e.currentTarget.value)}
+        disabled={isPosting}
       />
+      <button onClick={handleCreation} disabled={isPosting}>
+        Send
+      </button>
     </div>
   );
 };
