@@ -51,9 +51,16 @@ const CreatePostWizard = ({}) => {
         onChange={(e) => setUserInput(e.currentTarget.value)}
         disabled={isPosting}
       />
-      <button onClick={handleCreation} disabled={isPosting}>
-        Send
-      </button>
+
+      {userInput !== "" && !isPosting && (
+        <button onClick={handleCreation}>Send</button>
+      )}
+
+      {isPosting && (
+        <div className="flex items-center justify-center">
+          <LoadingSpinner size={20} />
+        </div>
+      )}
     </div>
   );
 };
