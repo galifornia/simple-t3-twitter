@@ -1,22 +1,12 @@
+import { filterUserForClient } from "./../../helpers/filterUserForClient";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
-import { User } from "@clerk/nextjs/dist/api";
 import { clerkClient } from "@clerk/nextjs/server";
 import { Post } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 
 import { protectedProcedure } from "../trpc";
-
-const filterUserForClient = (user: User) => {
-  if (user.username) {
-    return {
-      id: user.id,
-      username: user.username,
-      profilePictureUrl: user.profileImageUrl,
-    };
-  }
-};
 
 import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis";
