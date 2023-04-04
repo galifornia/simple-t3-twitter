@@ -10,6 +10,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import Link from "next/link";
 
 dayjs.extend(relativeTime);
 
@@ -49,6 +50,7 @@ const CreatePostWizard = ({}) => {
         src={user.profileImageUrl}
         alt={`Profile image of @${user.username!}`}
       />
+      {/* FIXME: use react-hook-form */}
       <input
         type="text"
         placeholder="Type something"
@@ -57,7 +59,7 @@ const CreatePostWizard = ({}) => {
         onChange={(e) => setUserInput(e.currentTarget.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            e.preventDefault;
+            e.preventDefault();
             handleCreation();
           }
         }}
@@ -88,15 +90,19 @@ const PostView = ({ post, author }: PostWithUser) => {
         src={author?.profilePictureUrl}
         alt={`Profile of @${author?.username}`}
       />
-      <div className="flex flex-col">
-        <div className="flex gap-2 text-slate-400">
-          <h5 className="">@{author.username}</h5>
-          <span className="">·</span>
-          <span>{`${dayjs(post.createdAt).fromNow()}`}</span>
-        </div>
+      <Link href={`/post/${post.id}`}>
+        <div className="flex flex-col">
+          <div className="flex gap-2 text-slate-400">
+            <Link href={`/@${author.username}`}>
+              <h5 className="">@{author.username}</h5>
+            </Link>
+            <span className="">·</span>
+            <span>{`${dayjs(post.createdAt).fromNow()}`}</span>
+          </div>
 
-        <p className="text-xl">{post.content}</p>
-      </div>
+          <p className="text-xl">{post.content}</p>
+        </div>
+      </Link>
     </div>
   );
 };
