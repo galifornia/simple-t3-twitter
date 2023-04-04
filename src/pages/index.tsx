@@ -25,8 +25,14 @@ const CreatePostWizard = ({}) => {
       // !FIXME: replace with optimistic update behavior
       void ctx.posts.getAllPosts.invalidate();
     },
-    onError: () => {
-      toast.error("Failed to create post!! Please try again later.");
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.formErrors;
+
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to create post!! Please try again later.");
+      }
     },
   });
 

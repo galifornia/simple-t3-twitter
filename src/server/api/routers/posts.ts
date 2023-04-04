@@ -61,7 +61,9 @@ export const postsRouter = createTRPCRouter({
     });
   }),
   create: protectedProcedure
-    .input(z.string().min(1).max(280))
+    .input(
+      z.string().min(1).max(280, "Too long. Must be 280 characters or less")
+    )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.userId;
       const { success: userIsAllowed } = await ratelimit.limit(userId);
