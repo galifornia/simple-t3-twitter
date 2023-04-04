@@ -1,4 +1,5 @@
 import { type AppType } from "next/app";
+import { Toaster } from "react-hot-toast";
 import {
   ClerkProvider,
   RedirectToSignIn,
@@ -20,6 +21,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   const isPublicPage = publicPages.includes(pathname);
   return (
     <ClerkProvider {...pageProps}>
+      <Toaster />
       {isPublicPage ? (
         <Component {...pageProps} />
       ) : (
