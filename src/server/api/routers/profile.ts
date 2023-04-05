@@ -1,12 +1,11 @@
-import { filterUserForClient } from "./../../helpers/filterUserForClient";
 import { z } from "zod";
 import { publicProcedure } from "~/server/api/trpc";
 
 import { clerkClient } from "@clerk/nextjs/server";
 import { TRPCError } from "@trpc/server";
 
+import { filterUserForClient } from "../../helpers/filterUserForClient";
 import { createTRPCRouter } from "../trpc";
-import { User } from "@clerk/nextjs/dist/api";
 
 export const profileRouter = createTRPCRouter({
   getUserByUsername: publicProcedure

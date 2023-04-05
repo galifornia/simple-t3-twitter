@@ -1,15 +1,19 @@
-import { type NextPage } from "next";
+import { useState } from "react";
 
-import { api, RouterOutputs } from "~/utils/api";
-import LoadingSpinner from "../components/LoadingSpinner";
-
-import { useUser } from "@clerk/nextjs";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { type NextPage } from "next";
 import Image from "next/image";
-import { useState } from "react";
-import { toast } from "react-hot-toast";
 import Link from "next/link";
+import { toast } from "react-hot-toast";
+import {
+  api,
+  RouterOutputs,
+} from "~/utils/api";
+
+import { useUser } from "@clerk/nextjs";
+
+import LoadingSpinner from "../components/LoadingSpinner";
 
 dayjs.extend(relativeTime);
 

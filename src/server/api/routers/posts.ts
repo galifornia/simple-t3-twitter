@@ -1,15 +1,17 @@
-import { filterUserForClient } from "./../../helpers/filterUserForClient";
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  publicProcedure,
+} from "~/server/api/trpc";
 
 import { clerkClient } from "@clerk/nextjs/server";
 import { Post } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-
-import { protectedProcedure } from "../trpc";
-
-import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
+import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+
+import { filterUserForClient } from "../../helpers/filterUserForClient";
+import { protectedProcedure } from "../trpc";
 
 // Create a new ratelimiter, that allows 3 requests per minute
 const ratelimit = new Ratelimit({
