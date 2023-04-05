@@ -5,6 +5,7 @@ import {
 } from "next";
 import Head from "next/head";
 import superson from "superjson";
+import Layout from "~/components/Layout";
 import { appRouter } from "~/server/api/root";
 import { api } from "~/utils/api";
 
@@ -23,7 +24,9 @@ const ProfilePage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
       <Head>
         <title>Chirp | {profile}</title>
       </Head>
-      <div>Profile of @{data.username}</div>
+      <Layout>
+        <div>Profile of @{data.username}</div>
+      </Layout>
     </>
   );
 };

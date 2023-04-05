@@ -6,6 +6,7 @@ import { type NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
+import Layout from "~/components/Layout";
 import {
   api,
   RouterOutputs,
@@ -45,7 +46,7 @@ const CreatePostWizard = ({}) => {
   };
 
   return (
-    <div className="flex gap-4">
+    <div className="flex h-24 items-center gap-4 border-b border-slate-400 px-4">
       <Image
         width={56}
         height={56}
@@ -116,15 +117,15 @@ const Feed = () => {
 
   if (isLoading)
     return (
-      <div className="flex h-screen w-full items-center justify-center">
+      <div className="flex h-[calc(100vh-100px)] w-full items-center justify-center">
         <LoadingSpinner />
       </div>
     );
   if (!data) return <div>Something went wrong fetching the data.</div>;
 
   return (
-    <div className="flex h-screen w-full justify-center">
-      <div className="flex w-full flex-col gap-4 border-x border-slate-400">
+    <div className="flex w-full justify-center overflow-y-scroll">
+      <div className="flex w-full flex-col gap-4 border-slate-400">
         {data.map((postWithAuthor) => (
           <PostView key={postWithAuthor.post.id} {...postWithAuthor} />
         ))}
@@ -144,14 +145,10 @@ const Home: NextPage = () => {
   }
 
   return (
-    <>
-      <main className="mx-auto flex w-full max-w-3xl flex-col justify-center">
-        <div className="w-full border border-slate-400 p-4">
-          <CreatePostWizard />
-        </div>
-        <Feed />
-      </main>
-    </>
+    <Layout>
+      <CreatePostWizard />
+      <Feed />
+    </Layout>
   );
 };
 
