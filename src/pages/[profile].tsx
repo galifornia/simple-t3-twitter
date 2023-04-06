@@ -6,16 +6,11 @@ import {
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import superson from "superjson";
 import Layout from "~/components/Layout";
 import LoadingSpinner from "~/components/LoadingSpinner";
 import PostView from "~/components/PostView";
-import { appRouter } from "~/server/api/root";
+import { generateSSGHelper } from "~/server/helpers/ssg";
 import { api } from "~/utils/api";
-
-import { createProxySSGHelpers } from "@trpc/react-query/ssg";
-
-import { prisma } from "../server/db";
 
 const ProfileFeed = ({ userId }: { userId: string }) => {
   const { data, isLoading } = api.posts.getPostsByUserId.useQuery(userId);
@@ -72,11 +67,7 @@ const ProfilePage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const ssg = createProxySSGHelpers({
-    router: appRouter,
-    ctx: { prisma, userId: "" },
-    transformer: superson,
-  });
+  const ssg = generateSSGHelper();
 
   const profile = context.params?.profile as string;
 
