@@ -46,7 +46,7 @@ export const postsRouter = createTRPCRouter({
     .input(z.string())
     .query(async ({ input, ctx }) => {
       const post = await ctx.prisma.post.findFirst({
-        where: { userId: input },
+        where: { id: input },
       });
 
       if (!post) {

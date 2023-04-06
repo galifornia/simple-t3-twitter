@@ -4,19 +4,31 @@ import {
   InferGetStaticPropsType,
 } from "next";
 import Head from "next/head";
+import Layout from "~/components/Layout";
+import LoadingSpinner from "~/components/LoadingSpinner";
+import PostView from "~/components/PostView";
 import { generateSSGHelper } from "~/server/helpers/ssg";
 import { api } from "~/utils/api";
 
 const PostPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const postId = props.id;
+
   const { data, isLoading } = api.posts.getPostByPostId.useQuery(postId);
+
+  if (!data) return <div>404</div>;
+
+  if (isLoading) return <LoadingSpinner size={48} />;
 
   return (
     <>
       <Head>
-        <title>Chirp | PostView</title>
+        <title>
+          Chirp | {`${data.post.content} | @${data.author.username}`}
+        </title>
       </Head>
-      <div>{data?.content}</div>
+      <Layout>
+        <PostView {...data} />
+      </Layout>
     </>
   );
 };
