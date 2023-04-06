@@ -42,6 +42,24 @@ export const postsRouter = createTRPCRouter({
 
       return await addAuthorToPosts(posts);
     }),
+  getPostByPostId: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const post = await ctx.prisma.post.findFirst({
+        where: { userId: input },
+      });
+
+      if (!post) {
+        new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Cannot find post by this id",
+        });
+        return null;
+      }
+
+      const postWithAuthor = (await addAuthorToPosts([post]))[0];
+      return postWithAuthor;
+    }),
 
   create: protectedProcedure
     .input(
