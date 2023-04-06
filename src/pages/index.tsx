@@ -1,22 +1,15 @@
 import { useState } from "react";
 
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { type NextPage } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { toast } from "react-hot-toast";
 import Layout from "~/components/Layout";
-import {
-  api,
-  RouterOutputs,
-} from "~/utils/api";
+import PostView from "~/components/PostView";
+import { api } from "~/utils/api";
 
 import { useUser } from "@clerk/nextjs";
 
 import LoadingSpinner from "../components/LoadingSpinner";
-
-dayjs.extend(relativeTime);
 
 const CreatePostWizard = ({}) => {
   const { user } = useUser();
@@ -79,35 +72,6 @@ const CreatePostWizard = ({}) => {
           <LoadingSpinner size={20} />
         </div>
       )}
-    </div>
-  );
-};
-
-type PostWithUser = RouterOutputs["posts"]["getAllPosts"][number];
-const PostView = ({ post, author }: PostWithUser) => {
-  return (
-    <div className="flex gap-4 border-b border-slate-400 p-4" key={post.id}>
-      <Image
-        width={56}
-        height={56}
-        className="h-14 w-14 rounded-full"
-        src={author?.profilePictureUrl}
-        alt={`Profile of @${author?.username}`}
-      />
-
-      <div className="flex flex-col">
-        <div className="flex gap-2 text-slate-400">
-          <Link href={`/@${author.username}`}>
-            <h5 className="">@{author.username}</h5>
-          </Link>
-          <Link href={`/post/${post.id}`}>
-            <span className="">·</span>
-            <span>{`${dayjs(post.createdAt).fromNow()}`}</span>
-          </Link>
-        </div>
-
-        <p className="text-xl">{post.content}</p>
-      </div>
     </div>
   );
 };

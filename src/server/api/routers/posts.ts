@@ -3,14 +3,13 @@ import {
   createTRPCRouter,
   publicProcedure,
 } from "~/server/api/trpc";
+import { addAuthorToPosts } from "~/server/helpers/addAuthorToPosts";
 
-import { clerkClient } from "@clerk/nextjs/server";
 import { Post } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
-import { filterUserForClient } from "../../helpers/filterUserForClient";
 import { protectedProcedure } from "../trpc";
 
 // Create a new ratelimiter, that allows 3 requests per minute
@@ -21,37 +20,29 @@ const ratelimit = new Ratelimit({
 });
 
 export const postsRouter = createTRPCRouter({
-  getAllPosts: publicProcedure.query(async ({ input, ctx }) => {
+  getAllPosts: publicProcedure.query(async ({ ctx }) => {
     const posts: Post[] = await ctx.prisma.post.findMany({
       take: 100,
       orderBy: { createdAt: "desc" },
     });
 
-    const users = (
-      await clerkClient.users.getUserList({
-        userId: posts.map((post) => {
-          if (post.userId) return post.userId;
-        }) as string[],
-        limit: 100,
-      })
-    )
-      .map(filterUserForClient)
-      .filter(Boolean);
-
-    return posts.map((post: Post) => {
-      const author = users.find((user) => user.id === post.userId);
-      if (!author)
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Author for post not found",
-        });
-
-      return {
-        post,
-        author,
-      };
-    });
+    return await addAuthorToPosts(posts);
   }),
+
+  getPostsByUserId: publicProcedure
+    .input(z.string().min(1))
+    .query(async ({ input, ctx }) => {
+      const posts: Post[] = await ctx.prisma.post.findMany({
+        take: 100,
+        orderBy: { createdAt: "desc" },
+        where: {
+          userId: input,
+        },
+      });
+
+      return await addAuthorToPosts(posts);
+    }),
+
   create: protectedProcedure
     .input(
       z.string().min(1).max(280, "Too long. Must be 280 characters or less")
