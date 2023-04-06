@@ -11,7 +11,7 @@ import { generateSSGHelper } from "~/server/helpers/ssg";
 import { api } from "~/utils/api";
 
 const PostPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const postId = props.id;
+  const postId = props.id as string;
 
   const { data, isLoading } = api.posts.getPostByPostId.useQuery(postId);
 
