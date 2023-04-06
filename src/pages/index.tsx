@@ -45,7 +45,7 @@ const CreatePostWizard = ({}) => {
         height={56}
         className="h-14 w-14 rounded-full"
         src={user.profileImageUrl}
-        alt={`Profile image of @${user.username!}`}
+        alt={`Profile image of @${user.username || ""}`}
       />
       {/* FIXME: use react-hook-form */}
       <input

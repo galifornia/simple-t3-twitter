@@ -5,7 +5,7 @@ import {
 } from "~/server/api/trpc";
 import { addAuthorToPosts } from "~/server/helpers/addAuthorToPosts";
 
-import { Post } from "@prisma/client";
+import type { Post } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
