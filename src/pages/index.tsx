@@ -1,16 +1,14 @@
 import { type NextPage } from "next";
 import Image from "next/image";
-import {
-  SubmitHandler,
-  useForm,
-} from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import Layout from "~/components/Layout";
 import PostView from "~/components/PostView";
 import { api } from "~/utils/api";
 
 import { useUser } from "@clerk/nextjs";
-import { Post } from "@prisma/client";
+import type { Post } from "@prisma/client";
 
 import LoadingSpinner from "../components/LoadingSpinner";
 
@@ -24,11 +22,10 @@ const CreatePostWizard = ({}) => {
   const {
     register,
     handleSubmit,
-    watch,
     reset,
-    formState: { errors },
+    formState: {},
   } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data, e) => {
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
     mutate(data.post);
     reset();
   };
@@ -108,7 +105,7 @@ const CreatePostWizard = ({}) => {
 
       <form
         className="flex w-full bg-transparent outline-none"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={() => void handleSubmit(onSubmit)}
       >
         <input
           type="text"
@@ -118,8 +115,9 @@ const CreatePostWizard = ({}) => {
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-
-              handleSubmit(onSubmit)();
+              void (async () => {
+                await handleSubmit(onSubmit)();
+              })();
             }
           }}
           disabled={isPosting}
