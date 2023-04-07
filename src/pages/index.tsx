@@ -8,6 +8,7 @@ import PostView from "~/components/PostView";
 import { api } from "~/utils/api";
 
 import { useUser } from "@clerk/nextjs";
+import { Post } from "@prisma/client";
 
 import LoadingSpinner from "../components/LoadingSpinner";
 
@@ -17,13 +18,47 @@ const CreatePostWizard = ({}) => {
   if (!user) return null;
 
   const ctx = api.useContext();
+
   const { mutate, isLoading: isPosting } = api.posts.create.useMutation({
-    onSuccess: () => {
-      setUserInput("");
-      // !FIXME: replace with optimistic update behavior
-      void ctx.posts.getAllPosts.invalidate();
+    onMutate: async (post) => {
+      // Cancel any outgoing refetches
+      // (so they don't overwrite our optimistic update)
+      await ctx.posts.getAllPosts.cancel();
+
+      // Snapshot the previous value
+      const previousPosts = ctx.posts.getAllPosts.getData();
+
+      if (!previousPosts) {
+        return {};
+      }
+
+      const newPost: {
+        post: Post;
+        author: { id: string; username: string; profilePictureUrl: string };
+      } = {
+        post: {
+          userId: user.id,
+          id: `fake-${Math.random() * 100}`,
+          content: post,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        author: {
+          id: user.id,
+          username: user.username || "",
+          profilePictureUrl: user.profileImageUrl,
+        },
+      };
+
+      // Optimistically update to the new value
+      ctx.posts.getAllPosts.setData(undefined, [newPost, ...previousPosts]);
+
+      // Return a context object with the snapshotted value
+      return { previousPosts };
     },
-    onError: (e) => {
+    // If the mutation fails,
+    // use the context returned from onMutate to roll back
+    onError: (e, _newPost, context) => {
       const errorMessage = e.data?.zodError?.formErrors;
 
       if (errorMessage && errorMessage[0]) {
@@ -31,6 +66,14 @@ const CreatePostWizard = ({}) => {
       } else {
         toast.error("Failed to create post!! Please try again later.");
       }
+      ctx.posts.getAllPosts.setData(undefined, context?.previousPosts);
+    },
+    onSuccess: () => {
+      setUserInput("");
+    },
+    // Always refetch after error or success:
+    onSettled: () => {
+      void ctx.posts.getAllPosts.invalidate();
     },
   });
 
