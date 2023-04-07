@@ -1,7 +1,9 @@
-import { useState } from "react";
-
 import { type NextPage } from "next";
 import Image from "next/image";
+import {
+  SubmitHandler,
+  useForm,
+} from "react-hook-form";
 import { toast } from "react-hot-toast";
 import Layout from "~/components/Layout";
 import PostView from "~/components/PostView";
@@ -12,9 +14,26 @@ import { Post } from "@prisma/client";
 
 import LoadingSpinner from "../components/LoadingSpinner";
 
+type Inputs = {
+  post: string;
+};
+
 const CreatePostWizard = ({}) => {
   const { user } = useUser();
-  const [userInput, setUserInput] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<Inputs>();
+  const onSubmit: SubmitHandler<Inputs> = (data, e) => {
+    mutate(data.post);
+    reset();
+  };
+
+  // const [userInput, setUserInput] = useState("");
   if (!user) return null;
 
   const ctx = api.useContext();
@@ -69,17 +88,13 @@ const CreatePostWizard = ({}) => {
       ctx.posts.getAllPosts.setData(undefined, context?.previousPosts);
     },
     onSuccess: () => {
-      setUserInput("");
+      reset();
     },
     // Always refetch after error or success:
     onSettled: () => {
       void ctx.posts.getAllPosts.invalidate();
     },
   });
-
-  const handleCreation = () => {
-    mutate(userInput);
-  };
 
   return (
     <div className="flex h-24 items-center gap-4 border-b border-slate-400 px-4">
@@ -90,31 +105,34 @@ const CreatePostWizard = ({}) => {
         src={user.profileImageUrl}
         alt={`Profile image of @${user.username || ""}`}
       />
-      {/* FIXME: use react-hook-form */}
-      <input
-        type="text"
-        placeholder="Type something"
-        className="grow bg-transparent outline-none"
-        value={userInput}
-        onChange={(e) => setUserInput(e.currentTarget.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            handleCreation();
-          }
-        }}
-        disabled={isPosting}
-      />
 
-      {userInput !== "" && !isPosting && (
-        <button onClick={handleCreation}>Send</button>
-      )}
+      <form
+        className="flex w-full bg-transparent outline-none"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <input
+          type="text"
+          placeholder="Type something"
+          className="w-full grow bg-transparent outline-none"
+          {...register("post")}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
 
-      {isPosting && (
-        <div className="flex items-center justify-center">
-          <LoadingSpinner size={20} />
-        </div>
-      )}
+              handleSubmit(onSubmit)();
+            }
+          }}
+          disabled={isPosting}
+        />
+
+        {!isPosting && <button type="submit">Send</button>}
+
+        {isPosting && (
+          <div className="flex items-center justify-center">
+            <LoadingSpinner size={20} />
+          </div>
+        )}
+      </form>
     </div>
   );
 };
