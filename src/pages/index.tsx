@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { type NextPage } from "next";
 import Image from "next/image";
 import type { SubmitHandler } from "react-hook-form";
@@ -5,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import Layout from "~/components/Layout";
 import PostView from "~/components/PostView";
+import { NUMBER_OF_POSTS_PER_PAGE } from "~/constants/constants";
 import { api } from "~/utils/api";
 
 import { useUser } from "@clerk/nextjs";
@@ -16,7 +19,7 @@ type Inputs = {
   post: string;
 };
 
-const CreatePostWizard = ({}) => {
+const CreatePostWizard = ({ page = 0 }) => {
   const { user } = useUser();
 
   const {
@@ -67,7 +70,7 @@ const CreatePostWizard = ({}) => {
       };
 
       // Optimistically update to the new value
-      ctx.posts.getAllPosts.setData(undefined, [newPost, ...previousPosts]);
+      ctx.posts.getAllPosts.setData(page, [newPost, ...previousPosts]);
 
       // Return a context object with the snapshotted value
       return { previousPosts };
@@ -82,7 +85,7 @@ const CreatePostWizard = ({}) => {
       } else {
         toast.error("Failed to create post!! Please try again later.");
       }
-      ctx.posts.getAllPosts.setData(undefined, context?.previousPosts);
+      ctx.posts.getAllPosts.setData(page, context?.previousPosts);
     },
     onSuccess: () => {
       reset();
@@ -135,8 +138,16 @@ const CreatePostWizard = ({}) => {
   );
 };
 
-const Feed = () => {
-  const { data, isLoading } = api.posts.getAllPosts.useQuery();
+const Feed = ({
+  page = 0,
+  numPosts,
+  setPage,
+}: {
+  page: number;
+  numPosts: number;
+  setPage: (v: number) => void;
+}) => {
+  const { data, isLoading } = api.posts.getAllPosts.useQuery(page);
 
   if (isLoading)
     return (
@@ -147,11 +158,29 @@ const Feed = () => {
   if (!data) return <div>Something went wrong fetching the data.</div>;
 
   return (
-    <div className="flex w-full justify-center overflow-y-scroll">
+    <div className="flex w-full flex-col justify-center overflow-y-scroll">
       <div className="flex w-full flex-col gap-4 border-slate-400">
         {data.map((postWithAuthor) => (
           <PostView key={postWithAuthor.post.id} {...postWithAuthor} />
         ))}
+      </div>
+      <div className="mx-auto my-4 flex gap-4">
+        {page > 0 && (
+          <button
+            className="w-32 rounded-xl border border-zinc-400 bg-transparent p-2 text-xl hover:border-zinc-200 hover:underline"
+            onClick={() => setPage(page - 1)}
+          >
+            Previous
+          </button>
+        )}
+        {(page + 1) * NUMBER_OF_POSTS_PER_PAGE <= numPosts && (
+          <button
+            className="w-32 rounded-xl border border-zinc-400 bg-transparent p-2 text-xl hover:border-zinc-200 hover:underline"
+            onClick={() => setPage(page + 1)}
+          >
+            Next
+          </button>
+        )}
       </div>
     </div>
   );
@@ -159,9 +188,11 @@ const Feed = () => {
 
 const Home: NextPage = () => {
   const { isLoaded, isSignedIn } = useUser();
+  const [page, setPage] = useState(0);
 
   // start fetching early
-  api.posts.getAllPosts.useQuery();
+  api.posts.getAllPosts.useQuery(0);
+  const { data } = api.posts.getCount.useQuery();
 
   if (!isLoaded || !isSignedIn) {
     return null;
@@ -169,8 +200,8 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      <CreatePostWizard />
-      <Feed />
+      <CreatePostWizard page={page} />
+      <Feed page={page} setPage={setPage} numPosts={data || 0} />
     </Layout>
   );
 };

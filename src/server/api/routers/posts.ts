@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { NUMBER_OF_POSTS_PER_PAGE } from "~/constants/constants";
 import {
   createTRPCRouter,
   publicProcedure,
@@ -20,13 +21,21 @@ const ratelimit = new Ratelimit({
 });
 
 export const postsRouter = createTRPCRouter({
-  getAllPosts: publicProcedure.query(async ({ ctx }) => {
-    const posts: Post[] = await ctx.prisma.post.findMany({
-      take: 100,
-      orderBy: { createdAt: "desc" },
-    });
+  getAllPosts: publicProcedure
+    .input(z.number())
+    .query(async ({ input, ctx }) => {
+      let posts = await ctx.prisma.post.findMany({
+        take: NUMBER_OF_POSTS_PER_PAGE,
+        skip: NUMBER_OF_POSTS_PER_PAGE * input,
+        orderBy: { createdAt: "desc" },
+      });
 
-    return await addAuthorToPosts(posts);
+      return await addAuthorToPosts(posts);
+    }),
+
+  getCount: publicProcedure.query(async ({ ctx }) => {
+    const num = await ctx.prisma.post.count();
+    return num;
   }),
 
   getPostsByUserId: publicProcedure
