@@ -24,7 +24,7 @@ export const postsRouter = createTRPCRouter({
   getAllPosts: publicProcedure
     .input(z.number())
     .query(async ({ input, ctx }) => {
-      let posts = await ctx.prisma.post.findMany({
+      const posts = await ctx.prisma.post.findMany({
         take: NUMBER_OF_POSTS_PER_PAGE,
         skip: NUMBER_OF_POSTS_PER_PAGE * input,
         orderBy: { createdAt: "desc" },
