@@ -22,12 +22,20 @@ const ratelimit = new Ratelimit({
 
 export const postsRouter = createTRPCRouter({
   getAllPosts: publicProcedure
-    .input(z.number())
+    .input(
+      z.object({
+        page: z.number(),
+        userId: z.string().optional(),
+      })
+    )
     .query(async ({ input, ctx }) => {
       const posts = await ctx.prisma.post.findMany({
         take: NUMBER_OF_POSTS_PER_PAGE,
-        skip: NUMBER_OF_POSTS_PER_PAGE * input,
+        skip: NUMBER_OF_POSTS_PER_PAGE * input.page,
         orderBy: { createdAt: "desc" },
+        where: {
+          ...(input.userId ? { userId: input.userId } : {}),
+        },
       });
 
       return await addAuthorToPosts(posts);

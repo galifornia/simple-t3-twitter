@@ -5,9 +5,8 @@ import Image from "next/image";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
+import Feed from "~/components/Feed";
 import Layout from "~/components/Layout";
-import PostView from "~/components/PostView";
-import { NUMBER_OF_POSTS_PER_PAGE } from "~/constants/constants";
 import { api } from "~/utils/api";
 
 import { useUser } from "@clerk/nextjs";
@@ -33,7 +32,6 @@ const CreatePostWizard = ({ page = 0 }) => {
     reset();
   };
 
-  // const [userInput, setUserInput] = useState("");
   if (!user) return null;
 
   const ctx = api.useContext();
@@ -70,7 +68,7 @@ const CreatePostWizard = ({ page = 0 }) => {
       };
 
       // Optimistically update to the new value
-      ctx.posts.getAllPosts.setData(page, [newPost, ...previousPosts]);
+      ctx.posts.getAllPosts.setData({ page }, [newPost, ...previousPosts]);
 
       // Return a context object with the snapshotted value
       return { previousPosts };
@@ -85,7 +83,7 @@ const CreatePostWizard = ({ page = 0 }) => {
       } else {
         toast.error("Failed to create post!! Please try again later.");
       }
-      ctx.posts.getAllPosts.setData(page, context?.previousPosts);
+      ctx.posts.getAllPosts.setData({ page }, context?.previousPosts);
     },
     onSuccess: () => {
       reset();
@@ -138,61 +136,12 @@ const CreatePostWizard = ({ page = 0 }) => {
   );
 };
 
-const Feed = ({
-  page = 0,
-  numPosts,
-  setPage,
-}: {
-  page: number;
-  numPosts: number;
-  setPage: (v: number) => void;
-}) => {
-  const { data, isLoading } = api.posts.getAllPosts.useQuery(page);
-
-  if (isLoading)
-    return (
-      <div className="flex h-[calc(100vh-100px)] w-full items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
-  if (!data) return <div>Something went wrong fetching the data.</div>;
-
-  return (
-    <div className="my-4 flex w-full flex-col justify-center overflow-y-scroll">
-      <div className="flex w-full flex-col gap-4 border border-slate-400">
-        {data.map((postWithAuthor) => (
-          <PostView key={postWithAuthor.post.id} {...postWithAuthor} />
-        ))}
-      </div>
-
-      <div className="mx-auto flex gap-4 py-10">
-        {page > 0 && (
-          <button
-            className="w-32 rounded-xl border border-zinc-400 bg-transparent p-2 text-xl hover:border-zinc-200 hover:underline"
-            onClick={() => setPage(page - 1)}
-          >
-            Previous
-          </button>
-        )}
-        {(page + 1) * NUMBER_OF_POSTS_PER_PAGE <= numPosts && (
-          <button
-            className="w-32 rounded-xl border border-zinc-400 bg-transparent p-2 text-xl hover:border-zinc-200 hover:underline"
-            onClick={() => setPage(page + 1)}
-          >
-            Next
-          </button>
-        )}
-      </div>
-    </div>
-  );
-};
-
 const Home: NextPage = () => {
   const { isLoaded, isSignedIn } = useUser();
   const [page, setPage] = useState(0);
 
   // start fetching early
-  api.posts.getAllPosts.useQuery(0);
+  api.posts.getAllPosts.useQuery({ page: 0 });
   const { data } = api.posts.getCount.useQuery();
 
   if (!isLoaded || !isSignedIn) {
