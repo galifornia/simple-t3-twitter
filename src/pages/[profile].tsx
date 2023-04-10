@@ -45,7 +45,7 @@ const ProfilePage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
       </Head>
       <Layout>
         <Link href="/">
-          <div className="relative flex h-24 items-center gap-8 border-b border-slate-400 p-4">
+          <div className="relative flex h-24 items-center gap-8 border border-slate-400 p-4">
             <Image
               className="border-slate-9000 absolute -bottom-0 left-0 -mb-12 ml-4 rounded-full border-2 border-black"
               width={96}
@@ -56,11 +56,13 @@ const ProfilePage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           </div>
         </Link>
 
-        <div className="border-b border-slate-400 p-4">
+        <div className="border border-t-0 border-slate-400 p-4">
           <div className="h-16"></div>
           <div className="text-2xl font-bold">@{data.username}</div>
         </div>
-        <ProfileFeed userId={data.id} />
+        <div className="my-4 border border-slate-400">
+          <ProfileFeed userId={data.id} />
+        </div>
       </Layout>
     </>
   );

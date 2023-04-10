@@ -97,7 +97,7 @@ const CreatePostWizard = ({ page = 0 }) => {
   });
 
   return (
-    <div className="flex h-24 items-center gap-4 border-b border-slate-400 px-4">
+    <div className="flex h-24 items-center gap-4 border border-slate-400 px-4">
       <Image
         width={56}
         height={56}
@@ -158,13 +158,14 @@ const Feed = ({
   if (!data) return <div>Something went wrong fetching the data.</div>;
 
   return (
-    <div className="flex w-full flex-col justify-center overflow-y-scroll">
-      <div className="flex w-full flex-col gap-4 border-slate-400">
+    <div className="my-4 flex w-full flex-col justify-center overflow-y-scroll">
+      <div className="flex w-full flex-col gap-4 border border-slate-400">
         {data.map((postWithAuthor) => (
           <PostView key={postWithAuthor.post.id} {...postWithAuthor} />
         ))}
       </div>
-      <div className="mx-auto my-4 flex gap-4">
+
+      <div className="mx-auto flex gap-4 py-10">
         {page > 0 && (
           <button
             className="w-32 rounded-xl border border-zinc-400 bg-transparent p-2 text-xl hover:border-zinc-200 hover:underline"
