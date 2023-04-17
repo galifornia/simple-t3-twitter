@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { NUMBER_OF_POSTS_PER_PAGE } from "~/constants/constants";
+import {
+  MAXIMUM_NUMBER_OF_CHARACTERS,
+  NUMBER_OF_POSTS_PER_PAGE,
+} from "~/constants/constants";
 import {
   createTRPCRouter,
   publicProcedure,
@@ -80,7 +83,13 @@ export const postsRouter = createTRPCRouter({
 
   create: protectedProcedure
     .input(
-      z.string().min(1).max(280, "Too long. Must be 280 characters or less")
+      z
+        .string()
+        .min(1)
+        .max(
+          MAXIMUM_NUMBER_OF_CHARACTERS,
+          "Too long. Must be 280 characters or less"
+        )
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.userId;

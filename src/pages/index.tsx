@@ -5,18 +5,25 @@ import Image from "next/image";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
+import { z } from "zod";
 import Feed from "~/components/Feed";
 import Layout from "~/components/Layout";
+import LoadingSpinner from "~/components/LoadingSpinner";
+import { MAXIMUM_NUMBER_OF_CHARACTERS } from "~/constants/constants";
 import { api } from "~/utils/api";
 
 import { useUser } from "@clerk/nextjs";
+import { zodResolver } from "@hookform/resolvers/zod";
 import type { Post } from "@prisma/client";
 
-import LoadingSpinner from "../components/LoadingSpinner";
+const validationSchema = z.object({
+  post: z
+    .string()
+    .min(1, "Cannot be empty")
+    .max(MAXIMUM_NUMBER_OF_CHARACTERS, "Post should be under 255 characters"),
+});
 
-type Inputs = {
-  post: string;
-};
+type ValidationSchema = z.infer<typeof validationSchema>;
 
 const CreatePostWizard = ({ page = 0 }) => {
   const { user } = useUser();
@@ -25,9 +32,12 @@ const CreatePostWizard = ({ page = 0 }) => {
     register,
     handleSubmit,
     reset,
-    formState: {},
-  } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    formState: { errors },
+  } = useForm<ValidationSchema>({
+    resolver: zodResolver(validationSchema),
+  });
+
+  const onSubmit: SubmitHandler<ValidationSchema> = (data) => {
     mutate(data.post);
     reset();
   };
@@ -95,7 +105,7 @@ const CreatePostWizard = ({ page = 0 }) => {
   });
 
   return (
-    <div className="flex h-24 items-center gap-4 border border-slate-400 px-4">
+    <div className="flex items-center gap-4 border border-slate-400 px-4">
       <Image
         priority
         width={56}
@@ -106,13 +116,15 @@ const CreatePostWizard = ({ page = 0 }) => {
       />
 
       <form
-        className="flex w-full bg-transparent outline-none"
-        onSubmit={() => void handleSubmit(onSubmit)}
+        className="flex w-full gap-4 bg-transparent outline-none"
+        onSubmit={handleSubmit(onSubmit)}
       >
-        <input
-          type="text"
+        <textarea
+          rows={4}
           placeholder="Type something"
-          className="w-full grow bg-transparent outline-none"
+          aria-invalid={errors.post ? "true" : "false"}
+          className="w-full bg-transparent py-4 outline-none"
+          id="post"
           {...register("post")}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -124,6 +136,8 @@ const CreatePostWizard = ({ page = 0 }) => {
           }}
           disabled={isPosting}
         />
+
+        {errors.post && <p>{errors.post.message}</p>}
 
         {!isPosting && <button type="submit">Send</button>}
 
