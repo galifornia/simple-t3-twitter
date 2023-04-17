@@ -42,7 +42,7 @@ const Feed = ({
             Previous
           </button>
         )}
-        {(page + 1) * NUMBER_OF_POSTS_PER_PAGE <= numPosts && (
+        {(page + 1) * NUMBER_OF_POSTS_PER_PAGE < numPosts && (
           <button
             className="w-32 rounded-xl border border-zinc-400 bg-transparent p-2 text-xl hover:border-zinc-200 hover:underline"
             onClick={() => setPage(page + 1)}
