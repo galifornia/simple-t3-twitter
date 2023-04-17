@@ -105,49 +105,54 @@ const CreatePostWizard = ({ page = 0 }) => {
   });
 
   return (
-    <div className="flex items-center gap-4 border border-slate-400 px-4">
-      <Image
-        priority
-        width={56}
-        height={56}
-        className="h-14 w-14 rounded-full"
-        src={user.profileImageUrl}
-        alt={`Profile image of @${user.username || ""}`}
-      />
-
-      <form
-        className="flex w-full gap-4 bg-transparent outline-none"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <textarea
-          rows={4}
-          placeholder="Type something"
-          aria-invalid={errors.post ? "true" : "false"}
-          className="w-full bg-transparent py-4 outline-none"
-          id="post"
-          {...register("post")}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              void (async () => {
-                await handleSubmit(onSubmit)();
-              })();
-            }
-          }}
-          disabled={isPosting}
+    <>
+      <div className="flex items-center gap-4 border border-slate-400 px-4">
+        <Image
+          priority
+          width={56}
+          height={56}
+          className="h-14 w-14 rounded-full"
+          src={user.profileImageUrl}
+          alt={`Profile image of @${user.username || ""}`}
         />
 
-        {errors.post && <p>{errors.post.message}</p>}
+        <form
+          className="flex w-full gap-4 bg-transparent outline-none"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <textarea
+            rows={4}
+            placeholder="Type something"
+            aria-invalid={errors.post ? "true" : "false"}
+            className="w-full bg-transparent py-4 outline-none"
+            id="post"
+            {...register("post")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                void (async () => {
+                  await handleSubmit(onSubmit)();
+                })();
+              }
+            }}
+            disabled={isPosting}
+          />
 
-        {!isPosting && <button type="submit">Send</button>}
+          {!isPosting && <button type="submit">Send</button>}
 
-        {isPosting && (
-          <div className="flex items-center justify-center">
-            <LoadingSpinner size={20} />
-          </div>
-        )}
-      </form>
-    </div>
+          {isPosting && (
+            <div className="flex items-center justify-center">
+              <LoadingSpinner size={20} />
+            </div>
+          )}
+        </form>
+      </div>
+      {errors.post && (
+        <p role="alert" className="py-2 font-bold text-red-600">
+          {errors.post.message}
+        </p>
+      )}
+    </>
   );
 };
 
