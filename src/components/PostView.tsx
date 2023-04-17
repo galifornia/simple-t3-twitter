@@ -11,6 +11,7 @@ export const PostView = ({ post, author }: PostWithUser) => {
   return (
     <div className="flex gap-4 border-b border-slate-400 p-4" key={post.id}>
       <Image
+        priority
         width={56}
         height={56}
         className="h-14 w-14 rounded-full"

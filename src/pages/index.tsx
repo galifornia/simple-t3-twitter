@@ -97,6 +97,7 @@ const CreatePostWizard = ({ page = 0 }) => {
   return (
     <div className="flex h-24 items-center gap-4 border border-slate-400 px-4">
       <Image
+        priority
         width={56}
         height={56}
         className="h-14 w-14 rounded-full"
