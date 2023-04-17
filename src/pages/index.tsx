@@ -20,7 +20,10 @@ const validationSchema = z.object({
   post: z
     .string()
     .min(1, "Cannot be empty")
-    .max(MAXIMUM_NUMBER_OF_CHARACTERS, "Post should be under 255 characters"),
+    .max(
+      MAXIMUM_NUMBER_OF_CHARACTERS,
+      `Post should be under ${MAXIMUM_NUMBER_OF_CHARACTERS} characters`
+    ),
 });
 
 type ValidationSchema = z.infer<typeof validationSchema>;
