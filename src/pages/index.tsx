@@ -121,7 +121,12 @@ const CreatePostWizard = ({ page = 0 }) => {
 
         <form
           className="flex w-full gap-4 bg-transparent outline-none"
-          onSubmit={() => void handleSubmit(onSubmit)}
+          onSubmit={(e) => {
+            e.preventDefault();
+            void (async () => {
+              await handleSubmit(onSubmit)();
+            })();
+          }}
         >
           <textarea
             rows={4}
