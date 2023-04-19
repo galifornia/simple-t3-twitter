@@ -27,7 +27,7 @@ const Feed = ({
   if (!data) return <div>Something went wrong fetching the data.</div>;
 
   return (
-    <div className="my-4 flex w-full flex-col justify-center overflow-y-scroll">
+    <div className="flex w-full flex-col justify-center overflow-y-scroll">
       <div className="flex w-full flex-col gap-4 border border-slate-400">
         {data.map((postWithAuthor) => (
           <PostView key={postWithAuthor.post.id} {...postWithAuthor} />

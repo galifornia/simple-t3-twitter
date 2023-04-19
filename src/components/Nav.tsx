@@ -14,7 +14,7 @@ const Nav = () => {
   if (!isLoaded) return null;
 
   return (
-    <nav className="flex items-center justify-between py-2">
+    <nav className="flex items-center justify-between py-4">
       <Link href="/">
         <h1 className="text-3xl font-bold tracking-wider">Chirp</h1>
       </Link>
