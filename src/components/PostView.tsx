@@ -30,7 +30,7 @@ export const PostView = ({ post, author }: PostWithUser) => {
           </Link>
         </div>
         <Link href={`/post/${post.id}`}>
-          <p className="text-xl">{post.content}</p>
+          <p className="overflow-anywhere text-xl">{post.content}</p>
         </Link>
       </div>
     </div>
