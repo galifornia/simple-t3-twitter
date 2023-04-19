@@ -13,7 +13,7 @@ import {
   SignedOut,
 } from "@clerk/nextjs";
 
-const publicPages = ["/sign-in/[[...index]]", "/sign-up/[[...index]]"];
+const publicPages = ["/sign-in/[[...index]]", "/sign-up/[[...index]]", "/"];
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   const { pathname } = useRouter();

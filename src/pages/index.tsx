@@ -172,13 +172,10 @@ const Home: NextPage = () => {
   api.posts.getAllPosts.useQuery({ page: 0 });
   const { data } = api.posts.getCount.useQuery();
 
-  if (!isLoaded || !isSignedIn) {
-    return null;
-  }
-
   return (
     <Layout>
-      <CreatePostWizard page={page} />
+      <p className="text-3xl text-white">Bananas</p>
+      {isLoaded && isSignedIn ? <CreatePostWizard page={page} /> : null}
       <Feed page={page} setPage={setPage} numPosts={data || 0} />
     </Layout>
   );
