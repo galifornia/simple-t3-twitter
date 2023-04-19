@@ -6,6 +6,7 @@ import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
+import { Button } from "~/components/Button";
 import Feed from "~/components/Feed";
 import Layout from "~/components/Layout";
 import LoadingSpinner from "~/components/LoadingSpinner";
@@ -56,7 +57,7 @@ const CreatePostWizard = ({ page = 0 }) => {
       await ctx.posts.getAllPosts.cancel();
 
       // Snapshot the previous value
-      const previousPosts = ctx.posts.getAllPosts.getData();
+      const previousPosts = ctx.posts.getAllPosts.getData({ page });
 
       if (!previousPosts) {
         return {};
@@ -120,7 +121,7 @@ const CreatePostWizard = ({ page = 0 }) => {
         />
 
         <form
-          className="flex w-full gap-4 bg-transparent outline-none"
+          className="flex w-full items-center gap-4 bg-transparent outline-none"
           onSubmit={(e) => {
             e.preventDefault();
             void (async () => {
@@ -146,7 +147,11 @@ const CreatePostWizard = ({ page = 0 }) => {
             disabled={isPosting}
           />
 
-          {!isPosting && <button type="submit">Send</button>}
+          {!isPosting && (
+            <Button variant="ghost" type="submit">
+              Send
+            </Button>
+          )}
 
           {isPosting && (
             <div className="flex items-center justify-center">
