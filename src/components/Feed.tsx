@@ -1,6 +1,7 @@
 import { NUMBER_OF_POSTS_PER_PAGE } from "~/constants/constants";
 import { api } from "~/utils/api";
 
+import { Button } from "./Button";
 import LoadingSpinner from "./LoadingSpinner";
 import PostView from "./PostView";
 
@@ -35,20 +36,14 @@ const Feed = ({
 
       <div className="mx-auto flex gap-4 py-10">
         {page > 0 && (
-          <button
-            className="w-32 rounded-xl border border-zinc-400 bg-transparent p-2 text-xl hover:border-zinc-200 hover:underline"
-            onClick={() => setPage(page - 1)}
-          >
+          <Button variant={"outline"} onClick={() => setPage(page - 1)}>
             Previous
-          </button>
+          </Button>
         )}
         {(page + 1) * NUMBER_OF_POSTS_PER_PAGE < numPosts && (
-          <button
-            className="w-32 rounded-xl border border-zinc-400 bg-transparent p-2 text-xl hover:border-zinc-200 hover:underline"
-            onClick={() => setPage(page + 1)}
-          >
+          <Button variant={"outline"} onClick={() => setPage(page + 1)}>
             Next
-          </button>
+          </Button>
         )}
       </div>
     </div>

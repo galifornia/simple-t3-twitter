@@ -28,6 +28,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Toaster />
+
       {isPublicPage ? (
         <Component {...pageProps} />
       ) : (
