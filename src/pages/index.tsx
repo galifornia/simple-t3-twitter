@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
 import { Button } from "~/components/Button";
+import { Card } from "~/components/card";
 import Feed from "~/components/Feed";
 import Layout from "~/components/Layout";
 import LoadingSpinner from "~/components/LoadingSpinner";
@@ -109,8 +110,8 @@ const CreatePostWizard = ({ page = 0 }) => {
   });
 
   return (
-    <>
-      <div className="flex items-center gap-4 border border-slate-400 px-4">
+    <Card className="bg-transparent text-slate-100">
+      <div className="flex items-center gap-4 px-4">
         <Image
           priority
           width={56}
@@ -148,7 +149,11 @@ const CreatePostWizard = ({ page = 0 }) => {
           />
 
           {!isPosting && (
-            <Button variant="ghost" type="submit">
+            <Button
+              className="rounded-xl border border-transparent text-lg hover:border-slate-100 hover:bg-transparent hover:text-slate-100"
+              variant="ghost"
+              type="submit"
+            >
               Send
             </Button>
           )}
@@ -165,7 +170,7 @@ const CreatePostWizard = ({ page = 0 }) => {
           {errors.post.message}
         </p>
       )}
-    </>
+    </Card>
   );
 };
 
