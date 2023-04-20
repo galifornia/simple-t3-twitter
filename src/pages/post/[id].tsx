@@ -27,8 +27,8 @@ const PostPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         </title>
       </Head>
       <Layout>
-        <div className="flex h-screen w-full items-center justify-center">
-          <div className="w-full border border-b-0 border-slate-400">
+        <div className="flex w-full items-center justify-center">
+          <div className="w-full">
             <PostView {...data} />
           </div>
         </div>
