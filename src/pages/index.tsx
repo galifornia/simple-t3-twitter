@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { z } from "zod";
 import { Button } from "~/components/Button";
-import { Card } from "~/components/card";
+import { Card } from "~/components/Card";
 import Feed from "~/components/Feed";
 import Layout from "~/components/Layout";
 import LoadingSpinner from "~/components/LoadingSpinner";

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { RouterOutputs } from "~/utils/api";
 
-import { Card } from "./card";
+import { Card } from "./Card";
 
 dayjs.extend(relativeTime);
 
