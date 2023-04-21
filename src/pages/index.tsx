@@ -12,11 +12,11 @@ import Feed from "~/components/Feed";
 import Layout from "~/components/Layout";
 import LoadingSpinner from "~/components/LoadingSpinner";
 import { MAXIMUM_NUMBER_OF_CHARACTERS } from "~/constants/constants";
+import { generatePost } from "~/lib/utils";
 import { api } from "~/utils/api";
 
 import { useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Post } from "@prisma/client";
 
 const validationSchema = z.object({
   post: z
@@ -64,23 +64,8 @@ const CreatePostWizard = ({ page = 0 }) => {
         return {};
       }
 
-      const newPost: {
-        post: Post;
-        author: { id: string; username: string; profilePictureUrl: string };
-      } = {
-        post: {
-          userId: user.id,
-          id: `fake-${Math.random() * 100}`,
-          content: post,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-        author: {
-          id: user.id,
-          username: user.username || "",
-          profilePictureUrl: user.profileImageUrl,
-        },
-      };
+      // Generate provisional post with fake id
+      const newPost = generatePost(user, post);
 
       // Optimistically update to the new value
       ctx.posts.getAllPosts.setData({ page }, [newPost, ...previousPosts]);
