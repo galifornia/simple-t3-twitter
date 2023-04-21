@@ -1,6 +1,7 @@
 import "~/styles/globals.css";
 
 import { type AppType } from "next/app";
+import { Indie_Flower } from "next/font/google";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { Toaster } from "react-hot-toast";
@@ -12,6 +13,11 @@ import {
   SignedIn,
   SignedOut,
 } from "@clerk/nextjs";
+
+const indie = Indie_Flower({
+  weight: "400",
+  subsets: ["latin"],
+});
 
 const publicPages = ["/sign-in/[[...index]]", "/sign-up/[[...index]]", "/"];
 
@@ -30,11 +36,15 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       <Toaster />
 
       {isPublicPage ? (
-        <Component {...pageProps} />
+        <main className={indie.className}>
+          <Component {...pageProps} />
+        </main>
       ) : (
         <>
           <SignedIn>
-            <Component {...pageProps} />
+            <main className={indie.className}>
+              <Component {...pageProps} />
+            </main>
           </SignedIn>
 
           <SignedOut>
