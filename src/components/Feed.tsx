@@ -1,4 +1,5 @@
 import { NUMBER_OF_POSTS_PER_PAGE } from "~/constants/constants";
+import { scrollToTop } from "~/lib/utils";
 import { api } from "~/utils/api";
 
 import { Button } from "./Button";
@@ -36,12 +37,24 @@ const Feed = ({
 
       <div className="mx-auto flex gap-4 py-10">
         {page > 0 && (
-          <Button variant={"outline"} onClick={() => setPage(page - 1)}>
+          <Button
+            variant={"outline"}
+            onClick={() => {
+              setPage(page - 1);
+              scrollToTop();
+            }}
+          >
             Previous
           </Button>
         )}
         {(page + 1) * NUMBER_OF_POSTS_PER_PAGE < numPosts && (
-          <Button variant={"outline"} onClick={() => setPage(page + 1)}>
+          <Button
+            variant={"outline"}
+            onClick={() => {
+              setPage(page + 1);
+              scrollToTop();
+            }}
+          >
             Next
           </Button>
         )}
