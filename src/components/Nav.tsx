@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import {
   SignInButton,
+  SignOutButton,
   SignUpButton,
   useUser,
 } from "@clerk/nextjs";
@@ -25,11 +26,15 @@ const Nav = () => {
             <SignInButton />
           </Button>
 
-          <Button variant={"outline"} className="text-lg">
+          <Button variant="outline" className="text-lg">
             <SignUpButton />
           </Button>
         </div>
-      ) : null}
+      ) : (
+        <Button className="text-lg">
+          <SignOutButton />
+        </Button>
+      )}
     </nav>
   );
 };
