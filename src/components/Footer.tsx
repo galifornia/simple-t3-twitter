@@ -3,7 +3,7 @@ import { AiOutlineGithub } from "react-icons/ai";
 
 const Footer = () => {
   return (
-    <footer className="flex h-10 w-full items-center justify-center gap-2 py-4 pb-20">
+    <footer className="my-4 flex h-10 w-full items-center justify-center gap-2 pb-20 pt-10">
       <span>Built by</span>
       <Link
         className="rounded-lg underline-offset-2 hover:underline"
