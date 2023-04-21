@@ -22,16 +22,16 @@ const Nav = () => {
 
       {!user ? (
         <div className="flex gap-4">
-          <Button className="text-lg">
+          <Button size="lg">
             <SignInButton />
           </Button>
 
-          <Button variant="outline" className="text-lg">
+          <Button variant="outline" size="lg">
             <SignUpButton />
           </Button>
         </div>
       ) : (
-        <Button className="text-lg">
+        <Button size="lg">
           <SignOutButton />
         </Button>
       )}

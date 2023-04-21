@@ -37,7 +37,7 @@ const Feed = ({
       <div className="mx-auto flex gap-4 py-10">
         {page > 0 && (
           <Button
-            className="text-lg"
+            size="lg"
             variant={"outline"}
             onClick={() => setPage(page - 1)}
           >
@@ -46,7 +46,7 @@ const Feed = ({
         )}
         {(page + 1) * NUMBER_OF_POSTS_PER_PAGE < numPosts && (
           <Button
-            className="text-lg"
+            size="lg"
             variant={"outline"}
             onClick={() => setPage(page + 1)}
           >
