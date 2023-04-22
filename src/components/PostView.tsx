@@ -8,7 +8,7 @@ import { Card } from "./Card";
 
 dayjs.extend(relativeTime);
 
-type PostWithUser = RouterOutputs["posts"]["getAllPosts"][number];
+type PostWithUser = RouterOutputs["posts"]["getAllPosts"]["data"][number];
 export const PostView = ({ post, author }: PostWithUser) => {
   return (
     <Card className="bg-transparent px-4 text-slate-100" key={post.id}>

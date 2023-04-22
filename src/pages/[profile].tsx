@@ -19,7 +19,6 @@ const ProfilePage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
     profile as string
   );
   api.posts.getAllPosts.useQuery({ page: 0, userId: user?.id });
-  const { data: postsNum } = api.posts.getCount.useQuery();
 
   const [page, setPage] = useState(0);
 
@@ -48,12 +47,7 @@ const ProfilePage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           <div className="text-2xl font-bold">@{user?.username}</div>
         </div>
 
-        <Feed
-          page={page}
-          setPage={setPage}
-          numPosts={postsNum || 0}
-          userId={user?.id}
-        />
+        <Feed page={page} setPage={setPage} userId={user?.id} />
       </Layout>
     </>
   );
