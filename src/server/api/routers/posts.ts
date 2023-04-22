@@ -9,7 +9,6 @@ import {
 } from "~/server/api/trpc";
 import { addAuthorToPosts } from "~/server/helpers/addAuthorToPosts";
 
-import type { Post } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
@@ -32,36 +31,27 @@ export const postsRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx }) => {
-      const posts = await ctx.prisma.post.findMany({
-        take: NUMBER_OF_POSTS_PER_PAGE,
-        skip: NUMBER_OF_POSTS_PER_PAGE * input.page,
-        orderBy: { createdAt: "desc" },
-        where: {
-          ...(input.userId ? { userId: input.userId } : {}),
-        },
-      });
+      const [posts, count] = await ctx.prisma.$transaction([
+        ctx.prisma.post.findMany({
+          take: NUMBER_OF_POSTS_PER_PAGE,
+          skip: NUMBER_OF_POSTS_PER_PAGE * input.page,
+          orderBy: { createdAt: "desc" },
+          where: {
+            ...(input.userId ? { userId: input.userId } : {}),
+          },
+        }),
+        ctx.prisma.post.count({
+          where: {
+            ...(input.userId ? { userId: input.userId } : {}),
+          },
+        }),
+      ]);
 
-      return await addAuthorToPosts(posts);
+      const response = { data: await addAuthorToPosts(posts), count };
+
+      return response;
     }),
 
-  getCount: publicProcedure.query(async ({ ctx }) => {
-    const num = await ctx.prisma.post.count();
-    return num;
-  }),
-
-  getPostsByUserId: publicProcedure
-    .input(z.string().min(1))
-    .query(async ({ input, ctx }) => {
-      const posts: Post[] = await ctx.prisma.post.findMany({
-        take: 100,
-        orderBy: { createdAt: "desc" },
-        where: {
-          userId: input,
-        },
-      });
-
-      return await addAuthorToPosts(posts);
-    }),
   getPostByPostId: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {

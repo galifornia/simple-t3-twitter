@@ -8,12 +8,10 @@ import PostView from "./PostView";
 
 const Feed = ({
   page = 0,
-  numPosts,
   userId,
   setPage,
 }: {
   page: number;
-  numPosts: number;
   userId?: string;
   setPage: (v: number) => void;
 }) => {
@@ -30,7 +28,7 @@ const Feed = ({
   return (
     <div className="my-4 flex w-full flex-col justify-center gap-4 overflow-y-scroll">
       <div className="flex w-full flex-col gap-4">
-        {data.map((postWithAuthor) => (
+        {data.data.map((postWithAuthor) => (
           <PostView key={postWithAuthor.post.id} {...postWithAuthor} />
         ))}
       </div>
@@ -48,7 +46,7 @@ const Feed = ({
             Previous
           </Button>
         )}
-        {(page + 1) * NUMBER_OF_POSTS_PER_PAGE < numPosts && (
+        {(page + 1) * NUMBER_OF_POSTS_PER_PAGE < data.count && (
           <Button
             size="lg"
             variant={"outline"}

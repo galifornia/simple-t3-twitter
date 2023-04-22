@@ -11,7 +11,10 @@ import { Card } from "~/components/Card";
 import Feed from "~/components/Feed";
 import Layout from "~/components/Layout";
 import LoadingSpinner from "~/components/LoadingSpinner";
-import { MAXIMUM_NUMBER_OF_CHARACTERS } from "~/constants/constants";
+import {
+  MAXIMUM_NUMBER_OF_CHARACTERS,
+  NUMBER_OF_POSTS_PER_PAGE,
+} from "~/constants/constants";
 import { generatePost } from "~/lib/utils";
 import { api } from "~/utils/api";
 
@@ -58,9 +61,9 @@ const CreatePostWizard = ({ page = 0 }) => {
       await ctx.posts.getAllPosts.cancel();
 
       // Snapshot the previous value
-      const previousPosts = ctx.posts.getAllPosts.getData({ page });
+      const previousData = ctx.posts.getAllPosts.getData({ page });
 
-      if (!previousPosts) {
+      if (!previousData) {
         return {};
       }
 
@@ -68,10 +71,19 @@ const CreatePostWizard = ({ page = 0 }) => {
       const newPost = generatePost(user, post);
 
       // Optimistically update to the new value
-      ctx.posts.getAllPosts.setData({ page }, [newPost, ...previousPosts]);
+      ctx.posts.getAllPosts.setData(
+        { page },
+        {
+          data: [newPost, ...previousData.data].slice(
+            0,
+            NUMBER_OF_POSTS_PER_PAGE
+          ),
+          count: previousData.count,
+        }
+      );
 
       // Return a context object with the snapshotted value
-      return { previousPosts };
+      return { previousData };
     },
     // If the mutation fails,
     // use the context returned from onMutate to roll back
@@ -83,7 +95,7 @@ const CreatePostWizard = ({ page = 0 }) => {
       } else {
         toast.error("Failed to create post!! Please try again later.");
       }
-      ctx.posts.getAllPosts.setData({ page }, context?.previousPosts);
+      ctx.posts.getAllPosts.setData({ page }, context?.previousData);
     },
     onSuccess: () => {
       reset();
@@ -165,12 +177,11 @@ const Home: NextPage = () => {
 
   // start fetching early
   api.posts.getAllPosts.useQuery({ page: 0 });
-  const { data } = api.posts.getCount.useQuery();
 
   return (
     <Layout>
       {isLoaded && isSignedIn ? <CreatePostWizard page={page} /> : null}
-      <Feed page={page} setPage={setPage} numPosts={data || 0} />
+      <Feed page={page} setPage={setPage} />
     </Layout>
   );
 };
