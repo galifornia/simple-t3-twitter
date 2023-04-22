@@ -28,14 +28,14 @@ const Feed = ({
   if (!data) return <div>Something went wrong fetching the data.</div>;
 
   return (
-    <div className="my-4 flex w-full flex-col justify-center overflow-y-scroll">
+    <div className="my-4 flex w-full flex-col justify-center gap-4 overflow-y-scroll">
       <div className="flex w-full flex-col gap-4">
         {data.map((postWithAuthor) => (
           <PostView key={postWithAuthor.post.id} {...postWithAuthor} />
         ))}
       </div>
 
-      <div className="mx-auto flex gap-4 py-10">
+      <div className="mx-auto flex gap-4">
         {page > 0 && (
           <Button
             size="lg"
