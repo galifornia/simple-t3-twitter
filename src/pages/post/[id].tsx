@@ -49,66 +49,87 @@ const validationSchema = z.object({
 
 type ValidationSchema = z.infer<typeof validationSchema>;
 
-const PostForm = () => {
-  const { mutate, isLoading: isPosting } = api.posts.update.useMutation();
+type PostFormProps = {
+  setIsEditing: (v: boolean) => void;
+  id: string;
+  refetchPost: () => void;
+  content: string;
+};
+const PostForm = ({
+  id,
+  content,
+  refetchPost,
+  setIsEditing,
+}: PostFormProps) => {
+  const { mutate, isLoading: isPosting } = api.posts.update.useMutation({
+    onSuccess: () => {
+      refetchPost();
+      setIsEditing(false);
+    },
+  });
 
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<ValidationSchema>({
+    defaultValues: { post: content },
     resolver: zodResolver(validationSchema),
   });
 
   const onSubmit: SubmitHandler<ValidationSchema> = (data) => {
-    mutate(data.post);
-    reset();
+    mutate({ id, content: data.post });
   };
+
   return (
-    <form
-      className="flex w-full items-center gap-4 bg-transparent outline-none"
-      onSubmit={(e) => {
-        e.preventDefault();
-        void (async () => {
-          await handleSubmit(onSubmit)();
-        })();
-      }}
-    >
-      <textarea
-        rows={4}
-        placeholder="Type something"
-        aria-invalid={errors.post ? "true" : "false"}
-        className="w-full resize-none bg-transparent py-4 outline-none placeholder:flex placeholder:leading-[7rem]"
-        id="post"
-        {...register("post")}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            void (async () => {
-              await handleSubmit(onSubmit)();
-            })();
-          }
+    <div className="flex flex-col items-center justify-center gap-4">
+      <form
+        className="flex w-full items-center gap-4 rounded-xl border bg-transparent p-4 outline-none"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void (async () => {
+            await handleSubmit(onSubmit)();
+          })();
         }}
-        disabled={isPosting}
-      />
+      >
+        <textarea
+          rows={4}
+          placeholder="Type something"
+          aria-invalid={errors.post ? "true" : "false"}
+          className="w-full resize-none bg-transparent py-4 outline-none placeholder:flex placeholder:leading-[7rem]"
+          id="post"
+          {...register("post")}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              void (async () => {
+                await handleSubmit(onSubmit)();
+              })();
+            }
+          }}
+          disabled={isPosting}
+        />
 
-      {!isPosting && (
-        <Button
-          className="rounded-xl border border-transparent text-lg hover:border-slate-100 hover:bg-transparent hover:text-slate-100"
-          variant="ghost"
-          type="submit"
-        >
-          Send
-        </Button>
-      )}
+        {!isPosting && (
+          <Button
+            className="rounded-xl border border-slate-100 text-lg hover:bg-transparent hover:text-slate-100"
+            variant="ghost"
+            type="submit"
+          >
+            Update
+          </Button>
+        )}
 
-      {isPosting && (
-        <div className="flex items-center justify-center">
-          <LoadingSpinner size={20} />
-        </div>
-      )}
-    </form>
+        {isPosting && (
+          <div className="flex items-center justify-center">
+            <LoadingSpinner size={20} />
+          </div>
+        )}
+      </form>
+      <Button variant="outline" onClick={() => setIsEditing(false)}>
+        Cancel edit
+      </Button>
+    </div>
   );
 };
 
@@ -116,7 +137,11 @@ const PostPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const postId = props.id as string;
   const [isEditing, setIsEditing] = useState(false);
 
-  const { data, isLoading } = api.posts.getPostByPostId.useQuery(postId);
+  const {
+    data,
+    isLoading,
+    refetch: refetchPost,
+  } = api.posts.getPostByPostId.useQuery(postId);
   const router = useRouter();
   const { mutate: deletePost } = api.posts.delete.useMutation({
     onSuccess: () => {
@@ -142,9 +167,22 @@ const PostPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
       <Layout>
         <div className="flex w-full flex-col items-center justify-center gap-4">
           <div className="w-full">
-            {isEditing ? <PostForm /> : <PostView {...data} />}
+            {isEditing ? (
+              <PostForm
+                id={data.post.id}
+                refetchPost={() =>
+                  void (async () => {
+                    await refetchPost();
+                  })()
+                }
+                content={data.post.content}
+                setIsEditing={setIsEditing}
+              />
+            ) : (
+              <PostView {...data} />
+            )}
           </div>
-          {hasPermission ? (
+          {hasPermission && !isEditing ? (
             <div className="flex gap-4">
               <Button
                 variant="outline"
