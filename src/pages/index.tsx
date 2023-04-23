@@ -132,7 +132,7 @@ const CreatePostWizard = ({ page = 0 }) => {
             rows={4}
             placeholder="Type something"
             aria-invalid={errors.post ? "true" : "false"}
-            className="w-full resize-none bg-transparent py-4 outline-none placeholder:flex placeholder:leading-[7rem]"
+            className="w-full resize-none bg-transparent py-4 outline-none [-ms-overflow-style:'none'] [scrollbar-width:'none'] placeholder:flex placeholder:leading-[7rem] [&::-webkit-scrollbar]:hidden"
             id="post"
             {...register("post")}
             onKeyDown={(e) => {
