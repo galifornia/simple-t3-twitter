@@ -11,6 +11,7 @@ import { Card } from "~/components/Card";
 import Feed from "~/components/Feed";
 import Layout from "~/components/Layout";
 import LoadingSpinner from "~/components/LoadingSpinner";
+import { Skeleton } from "~/components/Skeleton";
 import {
   MAXIMUM_NUMBER_OF_CHARACTERS,
   NUMBER_OF_POSTS_PER_PAGE,
@@ -180,7 +181,8 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      {isLoaded && isSignedIn ? <CreatePostWizard page={page} /> : null}
+      {!isLoaded && <Skeleton className="h-36 w-full" />}
+      {isSignedIn ? <CreatePostWizard page={page} /> : null}
       <Feed page={page} setPage={setPage} />
     </Layout>
   );

@@ -3,8 +3,8 @@ import { scrollToTop } from "~/lib/utils";
 import { api } from "~/utils/api";
 
 import { Button } from "./Button";
-import LoadingSpinner from "./LoadingSpinner";
 import PostView from "./PostView";
+import { PostSkeleton } from "./Skeleton";
 
 const Feed = ({
   page = 0,
@@ -19,8 +19,12 @@ const Feed = ({
 
   if (isLoading)
     return (
-      <div className="flex h-[calc(100vh-100px)] w-full items-center justify-center">
-        <LoadingSpinner />
+      <div className="flex w-full flex-col items-center justify-center gap-4">
+        <PostSkeleton />
+        <PostSkeleton />
+        <PostSkeleton />
+        <PostSkeleton />
+        <PostSkeleton />
       </div>
     );
   if (!data) return <div>Something went wrong fetching the data.</div>;
