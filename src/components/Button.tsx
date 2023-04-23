@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default:
           "bg-slate-900 text-primary-foreground hover:bg-slate-700 hover:border-slate-900 border border-transparent",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-red-500 text-slate-100 border border-transparent hover:text-slate-900 hover:border-slate-900",
         outline:
           "border border-input hover:bg-accent hover:text-accent-foreground",
         secondary:
@@ -33,6 +33,7 @@ const buttonVariants = cva(
   }
 );
 
+export type ButtonVariants = VariantProps<typeof buttonVariants>["variant"];
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {}

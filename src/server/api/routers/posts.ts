@@ -101,4 +101,29 @@ export const postsRouter = createTRPCRouter({
 
       return post;
     }),
+
+  delete: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.userId;
+      const { success: userIsAllowed } = await ratelimit.limit(userId);
+
+      if (!userIsAllowed) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "Rate limit has been reached.",
+        });
+      }
+
+      const post = await ctx.prisma.post.findFirst({ where: { id: input } });
+
+      if (post?.userId !== userId) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not allowed to delete posts that are not yours.",
+        });
+      }
+
+      await ctx.prisma.post.delete({ where: { id: input } });
+    }),
 });
