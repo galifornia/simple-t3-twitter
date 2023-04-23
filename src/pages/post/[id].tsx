@@ -26,6 +26,7 @@ import { Button } from "~/components/Button";
 import Layout from "~/components/Layout";
 import LoadingSpinner from "~/components/LoadingSpinner";
 import PostView from "~/components/PostView";
+import { PostSkeleton } from "~/components/Skeleton";
 import { MAXIMUM_NUMBER_OF_CHARACTERS } from "~/constants/constants";
 import { generateSSGHelper } from "~/server/helpers/ssg";
 import { api } from "~/utils/api";
@@ -139,7 +140,7 @@ const PostPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
 
   const {
     data,
-    isLoading,
+    isLoading: loadingPost,
     refetch: refetchPost,
   } = api.posts.getPostByPostId.useQuery(postId);
   const router = useRouter();
@@ -155,7 +156,12 @@ const PostPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
 
   if (!data) return <div>404</div>;
 
-  if (isLoading || checkingPermissions) return <LoadingSpinner size={48} />;
+  if (loadingPost || checkingPermissions)
+    return (
+      <Layout>
+        <PostSkeleton />
+      </Layout>
+    );
 
   return (
     <>
