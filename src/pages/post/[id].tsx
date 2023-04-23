@@ -50,7 +50,7 @@ const validationSchema = z.object({
 type ValidationSchema = z.infer<typeof validationSchema>;
 
 const PostForm = () => {
-  const { mutate, isLoading: isPosting } = api.posts.create.useMutation();
+  const { mutate, isLoading: isPosting } = api.posts.update.useMutation();
 
   const {
     register,
@@ -125,9 +125,12 @@ const PostPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
     },
   });
 
+  const { data: hasPermission, isLoading: checkingPermissions } =
+    api.posts.checkPermissions.useQuery(postId);
+
   if (!data) return <div>404</div>;
 
-  if (isLoading) return <LoadingSpinner size={48} />;
+  if (isLoading || checkingPermissions) return <LoadingSpinner size={48} />;
 
   return (
     <>
@@ -141,41 +144,43 @@ const PostPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           <div className="w-full">
             {isEditing ? <PostForm /> : <PostView {...data} />}
           </div>
-          <div className="flex gap-4">
-            <Button
-              variant="outline"
-              onClick={() => setIsEditing((state) => !state)}
-            >
-              Edit
-            </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent
-                className={`${indie.className} border-2 border-red-500`}
+          {hasPermission ? (
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                onClick={() => setIsEditing((state) => !state)}
               >
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="text-xl font-bold underline underline-offset-4">
-                    Are you absolutely sure?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    this post.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    variant="destructive"
-                    onClick={() => deletePost(postId)}
-                  >
-                    Continue
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
+                Edit
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive">Delete</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent
+                  className={`${indie.className} border-2 border-red-500`}
+                >
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-xl font-bold underline underline-offset-4">
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      this post.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      variant="destructive"
+                      onClick={() => deletePost(postId)}
+                    >
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          ) : null}
         </div>
       </Layout>
     </>

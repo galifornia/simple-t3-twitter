@@ -126,4 +126,27 @@ export const postsRouter = createTRPCRouter({
 
       await ctx.prisma.post.delete({ where: { id: input } });
     }),
+
+  update: protectedProcedure
+    .input(z.object({ content: z.string(), id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { content, id } = input;
+      await ctx.prisma.post.update({
+        data: {
+          content,
+        },
+        where: {
+          id,
+        },
+      });
+    }),
+  checkPermissions: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const userId = ctx.userId;
+      const exists = await ctx.prisma.post.findFirst({
+        where: { id: input, userId },
+      });
+      return !!exists;
+    }),
 });
