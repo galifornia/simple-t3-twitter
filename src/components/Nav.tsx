@@ -8,6 +8,7 @@ import {
 } from "@clerk/nextjs";
 
 import { Button } from "./Button";
+import ChirpLogo from "./ChirpLogo";
 import { NavSkeleton } from "./Skeleton";
 
 const Nav = () => {
@@ -17,7 +18,8 @@ const Nav = () => {
 
   return (
     <nav className="flex items-center justify-between py-4">
-      <Link href="/">
+      <Link className="gap flex items-center" href="/">
+        <ChirpLogo className="h-14 w-14 fill-slate-100" bgColor="transparent" />
         <h1 className="text-3xl font-bold tracking-wider">Chirp</h1>
       </Link>
 
