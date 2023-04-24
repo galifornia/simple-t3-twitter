@@ -18,7 +18,7 @@ const Nav = () => {
 
   return (
     <nav className="flex items-center justify-between py-4">
-      <Link className="gap flex items-center" href="/">
+      <Link className="flex items-center" href="/">
         <ChirpLogo className="h-14 w-14 fill-slate-100" bgColor="transparent" />
         <h1 className="text-3xl font-bold tracking-wider">Chirp</h1>
       </Link>
