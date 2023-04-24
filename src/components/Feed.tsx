@@ -1,21 +1,14 @@
+import { useRouter } from "next/router";
 import { NUMBER_OF_POSTS_PER_PAGE } from "~/constants/constants";
-import { scrollToTop } from "~/lib/utils";
 import { api } from "~/utils/api";
 
 import { Button } from "./Button";
 import PostView from "./PostView";
 import { PostSkeleton } from "./Skeleton";
 
-const Feed = ({
-  page = 0,
-  userId,
-  setPage,
-}: {
-  page: number;
-  userId?: string;
-  setPage: (v: number) => void;
-}) => {
+const Feed = ({ page = 0, userId }: { page: number; userId?: string }) => {
   const { data, isLoading } = api.posts.getAllPosts.useQuery({ page, userId });
+  const router = useRouter();
 
   if (isLoading)
     return (
@@ -43,8 +36,7 @@ const Feed = ({
             size="lg"
             variant={"outline"}
             onClick={() => {
-              setPage(page - 1);
-              scrollToTop();
+              void router.push(`/?page=${page - 1}`);
             }}
           >
             Previous
@@ -55,8 +47,7 @@ const Feed = ({
             size="lg"
             variant={"outline"}
             onClick={() => {
-              setPage(page + 1);
-              scrollToTop();
+              void router.push(`/?page=${page + 1}`);
             }}
           >
             Next
