@@ -58,6 +58,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
+        <meta name="theme-color" content="rgb(51 65 85)" />
       </Head>
       <Toaster />
 
