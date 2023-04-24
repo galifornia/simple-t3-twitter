@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import type {
   GetStaticPaths,
   GetStaticProps,
@@ -8,6 +6,8 @@ import type {
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { z } from "zod";
 import Feed from "~/components/Feed";
 import Layout from "~/components/Layout";
 import { generateSSGHelper } from "~/server/helpers/ssg";
@@ -20,7 +20,14 @@ const ProfilePage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   );
   api.posts.getAllPosts.useQuery({ page: 0, userId: user?.id });
 
-  const [page, setPage] = useState(0);
+  const router = useRouter();
+
+  const { page } = router.query;
+  const parsed = z.number().safeParse(page ? +page : 0);
+  const actualPage = parsed.success ? parsed.data : 0;
+
+  // start fetching early
+  api.posts.getAllPosts.useQuery({ page: actualPage });
 
   if (!user) return <div>404</div>;
 
@@ -47,7 +54,11 @@ const ProfilePage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           <div className="text-2xl font-bold">@{user?.username}</div>
         </div>
 
-        <Feed page={page} setPage={setPage} userId={user?.id} />
+        <Feed
+          page={actualPage}
+          route={`/@${user?.username}`}
+          userId={user?.id}
+        />
       </Layout>
     </>
   );

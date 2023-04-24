@@ -6,7 +6,15 @@ import { Button } from "./Button";
 import PostView from "./PostView";
 import { PostSkeleton } from "./Skeleton";
 
-const Feed = ({ page = 0, userId }: { page: number; userId?: string }) => {
+const Feed = ({
+  page = 0,
+  userId,
+  route = "/",
+}: {
+  page: number;
+  userId?: string;
+  route?: string;
+}) => {
   const { data, isLoading } = api.posts.getAllPosts.useQuery({ page, userId });
   const router = useRouter();
 
@@ -36,7 +44,7 @@ const Feed = ({ page = 0, userId }: { page: number; userId?: string }) => {
             size="lg"
             variant={"outline"}
             onClick={() => {
-              void router.push(`/?page=${page - 1}`);
+              void router.push(`${route}?page=${page - 1}`);
             }}
           >
             Previous
@@ -47,7 +55,7 @@ const Feed = ({ page = 0, userId }: { page: number; userId?: string }) => {
             size="lg"
             variant={"outline"}
             onClick={() => {
-              void router.push(`/?page=${page + 1}`);
+              void router.push(`${route}?page=${page + 1}`);
             }}
           >
             Next
