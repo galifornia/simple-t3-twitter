@@ -7,12 +7,7 @@ import { useRouter } from "next/router";
 import { Toaster } from "react-hot-toast";
 import { api } from "~/utils/api";
 
-import {
-  ClerkProvider,
-  RedirectToSignIn,
-  SignedIn,
-  SignedOut,
-} from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const indie = Indie_Flower({
   weight: "400",
@@ -62,23 +57,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
       </Head>
       <Toaster />
 
-      {isPublicPage ? (
-        <main className={indie.className}>
-          <Component {...pageProps} />
-        </main>
-      ) : (
-        <>
-          <SignedIn>
-            <main className={indie.className}>
-              <Component {...pageProps} />
-            </main>
-          </SignedIn>
-
-          <SignedOut>
-            <RedirectToSignIn />
-          </SignedOut>
-        </>
-      )}
+      <main className={indie.className}>
+        <Component {...pageProps} />
+      </main>
     </ClerkProvider>
   );
 };
