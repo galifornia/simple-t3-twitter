@@ -58,3 +58,6 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: main
