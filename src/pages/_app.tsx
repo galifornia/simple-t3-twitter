@@ -19,7 +19,13 @@ const indie = Indie_Flower({
   subsets: ["latin"],
 });
 
-const publicPages = ["/sign-in/[[...index]]", "/sign-up/[[...index]]", "/"];
+const publicPages = [
+  "/sign-in/[[...index]]",
+  "/sign-up/[[...index]]",
+  "/",
+  "/[profile]",
+  "/post/[id]",
+];
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   const { pathname } = useRouter();
