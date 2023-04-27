@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { z } from "zod";
+import Custom404 from "~/components/404";
 import Feed from "~/components/Feed";
 import Layout from "~/components/Layout";
 import { generateSSGHelper } from "~/server/helpers/ssg";
@@ -18,9 +19,14 @@ const ProfilePage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { data: user } = api.profiles.getUserByUsername.useQuery(
     profile as string
   );
+
   api.posts.getAllPosts.useQuery({ page: 0, userId: user?.id });
 
   const router = useRouter();
+
+  if (!user) {
+    return <Custom404 />;
+  }
 
   const { page } = router.query;
   const parsed = z.number().safeParse(page ? +page : 0);
@@ -28,8 +34,6 @@ const ProfilePage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
 
   // start fetching early
   api.posts.getAllPosts.useQuery({ page: actualPage });
-
-  if (!user) return <div>404</div>;
 
   return (
     <>
