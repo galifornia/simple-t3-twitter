@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { AiOutlineGithub } from "react-icons/ai";
+
+import GithubLogo from "./GithubLogo";
 
 const Footer = () => {
   return (
@@ -10,7 +11,7 @@ const Footer = () => {
         href="https://github.com/galifornia"
       >
         <div className="flex items-center gap-2">
-          <AiOutlineGithub className="h-7 w-7" />
+          <GithubLogo />
           <span>@galifornia</span>
         </div>
       </Link>
