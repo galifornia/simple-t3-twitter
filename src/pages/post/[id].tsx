@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import Custom404 from "~/components/404";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -154,7 +155,7 @@ const PostPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { data: hasPermission, isLoading: checkingPermissions } =
     api.posts.checkPermissions.useQuery(postId);
 
-  if (!data) return <div>404</div>;
+  if (!data) return <Custom404 />;
 
   if (loadingPost || checkingPermissions)
     return (
