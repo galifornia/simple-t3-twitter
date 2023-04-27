@@ -156,7 +156,7 @@ const PostPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
 
   if (!data) return <Custom404 />;
 
-  if (loadingPost || checkingPermissions)
+  if (loadingPost)
     return (
       <Layout>
         <PostSkeleton />
@@ -188,7 +188,7 @@ const PostPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
               <PostView {...data} />
             )}
           </div>
-          {hasPermission && !isEditing ? (
+          {!checkingPermissions && hasPermission && !isEditing ? (
             <div className="flex gap-4">
               <Button
                 variant="outline"
