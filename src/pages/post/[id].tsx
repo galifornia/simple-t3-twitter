@@ -147,8 +147,7 @@ const PostPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const router = useRouter();
   const { mutate: deletePost } = api.posts.delete.useMutation({
     onSuccess: () => {
-      // !FIXME: go back to the right page
-      void router.push("/");
+      void router.back();
     },
   });
 
