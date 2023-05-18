@@ -12,3 +12,7 @@ This is a simple microblogging CRUD application built using the [T3 stack](https
 - [Clerk](https://clerk.com/)
 - [react-hook-form](https://github.com/react-hook-form/react-hook-form)
 - [zod](https://github.com/colinhacks/zod)
+
+## Demo
+
+[Try it out!](https://simple-t3-twitter.vercel.app)
